@@ -1,0 +1,9 @@
+{
+  "extends": "next/core-web-vitals",
+  "rules": {
+    "quotes": ["error", "double"],
+    "curly":"error",
+    "default-case-last": "error",
+    "no-var": "error"
+  }
+}
