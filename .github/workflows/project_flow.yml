@@ -27,6 +27,7 @@ jobs:
           config-file: cypress.json
           build: npm run build
           start: npm start
+          GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
 
       - name: Save Outcome
         if: always()
