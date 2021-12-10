@@ -1684,10 +1684,11 @@ async function create_badge() {
     let outcome = core.getInput('cypress');
     let readme = 'README.md'; 
     let badge;
+    console.log(outcome, (outcome == 'success'));
     if (outcome == 'success') {
-        badge = '[![badge-success](https://img.shields.io/badge/tested%20with-Cypress-04C38E.svg)](https://www.cypress.io/)'
+        badge = '![badge-success](https://img.shields.io/badge/tested%20with-Cypress-04C38E.svg)(https://www.cypress.io/)'
     } else {
-        badge = '[![badge-failure](https://img.shields.io/badge/test-failure-red)]'
+        badge = '![badge-failure](https://img.shields.io/badge/test-failure-red)'
     }
 
     fs.readFile(readme, 'utf8', function (err, data) {
