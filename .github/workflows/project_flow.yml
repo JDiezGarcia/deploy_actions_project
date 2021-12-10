@@ -71,5 +71,5 @@ jobs:
             git pull
             git add .
             git commit -m "Meme"
-            git remote set-url origin https://JDiezGarcia:${{ secrets.TOKEN_GITHUB }}@github.com/JDiezGarcia/git-actions-express.git
+            git remote set-url origin https://JDiezGarcia:${{ secrets.TOKEN_GITHUB }}@github.com/JDiezGarcia/deploy-action-project.git
             git push
