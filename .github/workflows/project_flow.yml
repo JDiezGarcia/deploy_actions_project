@@ -1,0 +1,70 @@
+name: Actions Flows
+on: [push]
+jobs:
+  linter-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name:  Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Install Dependencies 
+        run: npm install
+      
+      - name: Run Lint
+        run: npm run lint
+
+  cypress-test:
+    runs-on: ubuntu-latest
+    needs: linter-test
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      
+      - name: Cypress run
+        id: cypress
+        uses: cypress-io/github-action@v2
+        with:
+          config-file: cypress.json
+
+      - name: Save Outcome
+        if: always()
+        run: echo ${{ steps.cypress.outcome}} > result.txt
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: result.txt
+          path: result.txt
+    
+  badge-readme:
+    runs-on: ubuntu-latest
+    needs: cypress-test
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      
+      - name: Download Changes
+        uses: actions/download-artifact@v2
+        with:
+          name: result.txt
+      
+      - name: Create Output
+        id: cypress
+        run: echo "::set-outputname=cypress_outcome::$(cat result.txt)"
+      
+      - name: Create Badge
+        uses: ./.github/actions/create_badge/
+        id: readme
+        with:
+          cypress: '${{ steps.cypress.outputs.cypress_outcome }}'
+      
+      - name: Upload Changes
+        run: | 
+            git config user.email "jdiez.actions@github.com"
+            git config user.name "JDiezActions"
+            git pull
+            git add .
+            git commit -m "Meme"
+            git remote set-url origin https://JDiezGarcia:${{ secrets.TOKEN_GITHUB }}@github.com/JDiezGarcia/git-actions-express.git
+            git push
