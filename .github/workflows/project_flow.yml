@@ -23,6 +23,7 @@ jobs:
       - name: Cypress run
         id: cypress
         uses: cypress-io/github-action@v2
+        continue-on-error: true
         with:
           config-file: cypress.json
           build: npm run build
@@ -31,12 +32,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
 
       - name: Save Outcome
-        if: always()
         run: echo ${{ steps.cypress.outcome}} > result.txt
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
-        if: always()
         with:
           name: result.txt
           path: result.txt
@@ -64,7 +63,6 @@ jobs:
         with:
           cypress: ${{ steps.cypress.outputs.cypress_outcome }}
       
-      - run: echo "${{ steps.cypress.outputs.cypress_outcome }}"
       - name: Upload Changes
         run: | 
             git config user.email "jdiez.actions@github.com"
