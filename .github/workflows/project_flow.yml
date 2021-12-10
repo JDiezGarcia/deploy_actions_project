@@ -23,6 +23,10 @@ jobs:
       - name: Cypress run
         id: cypress
         uses: cypress-io/github-action@v2
+        with:
+          config-file: cypress.json
+          build: npm run build
+          start: npm start
 
       - name: Save Outcome
         if: always()
