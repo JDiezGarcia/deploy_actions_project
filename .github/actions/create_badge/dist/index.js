@@ -1686,7 +1686,7 @@ async function create_badge() {
     let badge;
     console.log(outcome, (outcome == 'success'));
     if (outcome == 'success') {
-        badge = '[![badge-success](https://img.shields.io/badge/tested%20with-Cypress-04C38E.svg)(https://www.cypress.io/)]'
+        badge = '![badge-success](https://img.shields.io/badge/tested%20with-Cypress-04C38E.svg)'
     } else {
         badge = '![badge-failure](https://img.shields.io/badge/test-failure-red)'
     }
