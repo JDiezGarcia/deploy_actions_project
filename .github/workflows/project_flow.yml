@@ -62,8 +62,9 @@ jobs:
         uses: ./.github/actions/create_badge/
         id: readme
         with:
-          cypress: '${{ steps.cypress.outputs.cypress_outcome }}'
+          cypress: ${{ steps.cypress.outputs.cypress_outcome }}
       
+      - run: echo "${{ steps.cypress.outputs.cypress_outcome }}""
       - name: Upload Changes
         run: | 
             git config user.email "jdiez.actions@github.com"
