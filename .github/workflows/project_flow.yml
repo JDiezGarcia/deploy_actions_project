@@ -56,7 +56,7 @@ jobs:
       
       - name: Create Output
         id: cypress
-        run: echo "::set-outputname=cypress_outcome::$(cat result.txt)"
+        run: echo "::set-output name=cypress_outcome::$(cat result.txt)"
       
       - name: Create Badge
         uses: ./.github/actions/create_badge/
