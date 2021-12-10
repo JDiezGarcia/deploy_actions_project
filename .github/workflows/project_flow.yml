@@ -23,8 +23,6 @@ jobs:
       - name: Cypress run
         id: cypress
         uses: cypress-io/github-action@v2
-        with:
-          config-file: cypress.json
 
       - name: Save Outcome
         if: always()
