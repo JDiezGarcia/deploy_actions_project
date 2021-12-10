@@ -70,6 +70,6 @@ jobs:
             git config user.name "JDiezActions"
             git pull
             git add .
-            git commit -m "Meme"
-            git remote set-url origin https://JDiezGarcia:${{ secrets.TOKEN_GITHUB }}@github.com/JDiezGarcia/deploy-actions-project.git
+            git commit -m "Readme"
+            git remote set-url origin https://JDiezGarcia:${{ secrets.TOKEN_GITHUB }}@github.com/JDiezGarcia/deploy_actions_project.git
             git push
