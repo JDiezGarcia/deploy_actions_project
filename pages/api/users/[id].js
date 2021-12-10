@@ -4,9 +4,9 @@ export default handler;
 
 function handler(req, res) {
   switch (req.method) {
-    case 'GET':
+    case "GET":
       return getUserById();
-    case 'PUT':
+    case "PUT":
       return updateUser();
     case "DELETE":
       return deleteUser();
@@ -15,7 +15,7 @@ function handler(req, res) {
   }
 
   function getUserById() {
-    var user = usersRepo.getById(req.query.id);
+    let user = usersRepo.getById(req.query.id);
     return res.status(200).json(user);
   }
 
