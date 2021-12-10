@@ -43,6 +43,7 @@ jobs:
     
   badge-readme:
     runs-on: ubuntu-latest
+    if: always()
     needs: cypress-test
     steps:
       - name: Checkout Code
