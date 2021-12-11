@@ -6,7 +6,7 @@ function handler(req, res) {
     switch (req.method) {
         case "GET":
             return getUsers();
-        case "POST0":
+        case "POST":
             return createUser();
         case "DELETE":
             return deleteAllUsers();
