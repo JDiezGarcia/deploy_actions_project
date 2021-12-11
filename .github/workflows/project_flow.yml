@@ -125,7 +125,7 @@ jobs:
           cypress:  ${{ needs.cypress-test.result }}
           badge:  ${{ needs.badge-readme.result }}
           deploy:  ${{ needs.deploy.result }}
-          email: ${{ needs.email-result.resul
+          email: ${{ needs.email-result.result }}
           access_key: ${{ secrets.ACCESS_KEY }}
           access_secret: ${{ secrets.ACCESS_SECRET }}
           consumer_key: ${{ secrets.CONSUMER_KEY }}
