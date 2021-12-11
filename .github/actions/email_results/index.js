@@ -15,11 +15,14 @@ var mailOptions = {
     subject: 'Resultado del workdflow ejecutado',
     html: `
     <div>
-        <h1>Resultados de los Jobs</h1>
-        <span>linter: ${core.getInput('linter')}</span><br/>
-        <span>cypress: ${core.getInput('cypress')}</span><br/>
-        <span>badge: ${core.getInput('badge')}</span><br/>
-        <span>deploy: ${core.getInput('deploy')}</span><br/>
+        <p>Se ha realizado un push en la rama main que ha provocado la ejecución del workflow 
+        project_flow con los siguientes resultados: </p>
+        <br/>
+        <br/>
+        <span>- linter: ${core.getInput('linter')}</span><br/>
+        <span>- cypress: ${core.getInput('cypress')}</span><br/>
+        <span>- badge: ${core.getInput('badge')}</span><br/>
+        <span>- deploy: ${core.getInput('deploy')}</span><br/>
     </div>
     ` 
 };

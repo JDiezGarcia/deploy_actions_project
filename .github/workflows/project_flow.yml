@@ -108,3 +108,25 @@ jobs:
           send_to: ${{ secrets.DESTINATION_EMAIL }}
           origin_email: ${{ secrets.ORIGIN_EMAIL }}
           origin_pass: ${{ secrets.ORIGIN_PASS }}
+  
+  tweet-result:
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [cypress-test, deploy, linter-test, badge-readme, email-result ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      
+      - name: Post Tweet
+        uses: ./.github/actions/tweet_results/
+        id: tweet-results
+        with:
+          linter: ${{ needs.linter-test.result }}
+          cypress:  ${{ needs.cypress-test.result }}
+          badge:  ${{ needs.badge-readme.result }}
+          deploy:  ${{ needs.deploy.result }}
+          email: ${{ needs.email-result.resul
+          access_key: ${{ secrets.ACCESS_KEY }}
+          access_secret: ${{ secrets.ACCESS_SECRET }}
+          consumer_key: ${{ secrets.CONSUMER_KEY }}
+          consumer_secret: ${{ secrets.CONSUMER_SECRET }}
