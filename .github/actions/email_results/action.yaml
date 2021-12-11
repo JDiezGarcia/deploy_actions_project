@@ -1,0 +1,27 @@
+name: 'email_results'
+description: 'Sends a email with the results'
+inputs:
+  cypress:
+    description: 'Cypress Result'
+    required: true
+  linter:
+    description: 'Linter Result'
+    required: true
+  deploy:
+    description: 'Deploy Result'
+    required: true
+  badge:
+    description: 'Badge Result'
+    required: true
+  send_to:
+    description: 'Email to Receive Results'
+    required: true
+  origin_email:
+    description: 'Email to Send Results'
+    required: true
+  origin_pass:
+    description: 'Email password'
+    required: true
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
