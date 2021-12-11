@@ -102,7 +102,7 @@ jobs:
         id: email-results
         with:
           linter: ${{ needs.linter-test.result }}
-          cypress:  ${{ needs.cypress.result }}
+          cypress:  ${{ needs.cypress-test.result }}
           badge:  ${{ needs.badge-readme.result }}
           deploy:  ${{ needs.deploy.result }}
           send_to: ${{ secrets.DESTINATION_EMAIL }}
