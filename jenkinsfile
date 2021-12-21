@@ -1,0 +1,16 @@
+pipeline {
+    agent any
+    stages {
+        stage('Start') {
+            steps {
+                echo 'Welcome....'
+                sleep 10 
+            }
+        }
+        stage('Good Bye') {
+            steps {
+                echo 'Goodbye!'
+            }
+        }
+    }
+}
