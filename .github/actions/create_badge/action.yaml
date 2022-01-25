@@ -1,9 +1,0 @@
-name: 'create_badge'
-description: 'Creates a Badge depending of the outcome'
-inputs:
-  cypress:
-    description: 'Cypress Outcome'
-    required: true
-runs:
-  using: 'node12'
-  main: 'dist/index.js'
