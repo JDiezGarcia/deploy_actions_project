@@ -50,8 +50,7 @@ pipeline {
                     withCredentials([string(credentialsId: 'TOKEN_GITHUB', variable: 'TOKEN')]) {
                         sh "git remote set-url origin https://JDiezGarcia:${TOKEN}@github.com/JDiezGarcia/deploy_actions_project.git"
                     }
-                    sh 'git pull origin jenkins'
-                    sh 'git checkout jenkins'
+                    sh 'git pull origin jenkins --rebase'
                     sh 'git add .'
                     sh 'git commit --allow-empty -m \'[ci skip] Readme\''
                     sh 'git push origin jenkins'
