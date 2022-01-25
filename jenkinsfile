@@ -17,13 +17,21 @@ pipeline {
                 }
             }
         }
+        stage('Cypress') {
+            steps {
+                script {
+                    env.cypressResult = sh(script: 'npm run cypress', returnStatus: true)
+                }
+            }
+        }
         stage('Results') {
             steps {
                 script {
-                    sh "echo ${params.executor}"
-                    sh "echo ${params.subject}"
-                    sh "echo ${params.email}"
-                    sh "echo ${env.lintResult}"
+                    sh "echo 'executor: ${params.executor}'"
+                    sh "echo 'subject: ${params.subject}'"
+                    sh "echo 'email: ${params.email}'"
+                    sh "echo 'lint: ${env.lintResult}'"
+                    sh "echo 'cypress: ${env.cypressResult}'"
                 }
             }
         }
