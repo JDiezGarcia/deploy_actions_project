@@ -21,7 +21,7 @@ pipeline {
             steps {
                 script {
                     sh 'cypress install'
-                    env.cypressResult = sh(script: 'npm run cypress', returnStatus: true)
+                    env.cypressResult = sh(script: 'npm run cypress:ci', returnStatus: true)
                 }
             }
         }
