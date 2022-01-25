@@ -54,7 +54,7 @@ pipeline {
                     sh 'git checkout jenkins'
                     sh 'git add .'
                     sh 'git commit --allow-empty -m \'[ci skip] Readme\''
-                    sh 'git push jenkins'
+                    sh 'git push origin jenkins'
                 }
             }
         }
