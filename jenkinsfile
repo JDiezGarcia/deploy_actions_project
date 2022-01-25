@@ -1,7 +1,7 @@
 pipeline {
     agent any
     triggers {
-        pollSCM('*/1 * * * *')
+        pollSCM('* */3 * * *')
     }
     parameters {
         string(name: 'executor', description: 'What is your name?', defaultValue: 'System' )
@@ -20,7 +20,6 @@ pipeline {
         stage('Cypress') {
             steps {
                 script {
-                    sh 'npm install cypress -g'
                     env.cypressResult = sh(script: 'npm run cypress', returnStatus: true)
                 }
             }
