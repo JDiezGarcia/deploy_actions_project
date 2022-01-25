@@ -9,6 +9,20 @@ pipeline {
         string(name: 'email', description: 'Put your email to recieve a notificiation with the results', defaultValue: 'fco.javier.diez.garcia@gmail.com')
     }
     stages {
+        stage ('Checkout SCM') {
+            steps {
+                script {
+                    STAGE_NAME = 'Checkout SCM'
+
+                    checkout scm
+                    result = sh (script: "git log -1 | grep '.*\\[ci skip\\].*'", returnStatus: true)
+                    if (result == 0) {
+                        echo ("'ci skip' spotted in git commit. Aborting.")
+                        success ("'ci skip' spotted in git commit. Aborting.")
+                    }
+                }
+            }
+        }
         stage('Lint') {
             steps {
                 script {
@@ -27,6 +41,13 @@ pipeline {
                 }
             }
         }
+        stage('Create Badge'){
+            steps {
+                script{
+                    env.badgeResult = sh(script: 'node jenkinsScripts/create_badge/dist/index.js', returnStatus: true)
+                }
+            }
+        }
         stage('Results') {
             steps {
                 script {
@@ -35,6 +56,7 @@ pipeline {
                     sh "echo 'email: ${params.email}'"
                     sh "echo 'lint: ${env.lintResult}'"
                     sh "echo 'cypress: ${env.cypressResult}'"
+                    sh "echo 'badge: ${env.badgeResult}'"
                 }
             }
         }
