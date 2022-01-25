@@ -8,6 +8,9 @@ pipeline {
         string(name: 'subject', description: 'Why are you executing the pipeline?', defaultValue: 'We detected a change in the repository')
         string(name: 'email', description: 'Put your email to recieve a notificiation with the results', defaultValue: 'fco.javier.diez.garcia@gmail.com')
     }
+    environments {
+        CYPRESS_CACHE_FOLDER='~/cypress_cache'
+    }
     stages {
         stage('Lint') {
             steps {
