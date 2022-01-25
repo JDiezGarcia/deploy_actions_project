@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    triggers {
+        pollSCM('*/1 * * * *')
+    }
     parameters {
         string(name: 'executor', description: 'What is your name?', defaultValue: 'System' )
         string(name: 'subject', description: 'Why are you executing the pipeline?', defaultValue: 'We detected a change in the repository')
@@ -9,18 +12,18 @@ pipeline {
         stage('Lint') {
             steps {
                 script {
-                    sh "npm install"
-                    env.lintResult = sh(script: "npm run lint", returnStatus: true)
+                    sh 'npm install'
+                    env.lintResult = sh(script: 'npm run lint', returnStatus: true)
                 }
             }
         }
-        stage('Results'){
+        stage('Results') {
             steps {
-                script{
+                script {
                     sh "echo ${params.executor}"
                     sh "echo ${params.subject}"
                     sh "echo ${params.email}"
-                    sh "echo ${env.lintResult}"               
+                    sh "echo ${env.lintResult}"
                 }
             }
         }
