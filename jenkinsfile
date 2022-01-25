@@ -1,7 +1,7 @@
 pipeline {
     agent any
     triggers {
-        pollSCM('1 */3 * * *')
+        pollSCM('*/1 * * * *')
     }
     parameters {
         string(name: 'executor', description: 'What is your name?', defaultValue: 'System' )
@@ -47,12 +47,12 @@ pipeline {
                     env.badgeResult = sh(script: 'node jenkinsScripts/create_badge/dist/index.js', returnStatus: true)
                     sh 'git config user.email \'jdiez.actions@github.com\''
                     sh 'git config user.name \'JDiezActions\' '
-                    sh 'git pull'
-                    sh 'git add .'
-                    sh 'git commit - allow - empty - m \'[ci skip] Readme\''
                     withCredentials([string(credentialsId: 'TOKEN_GITHUB', variable: 'TOKEN')]) {
                         sh "git remote set-url origin https://JDiezGarcia:${TOKEN}@github.com/JDiezGarcia/deploy_actions_project.git"
                     }
+                    sh 'git pull'
+                    sh 'git add .'
+                    sh 'git commit - allow - empty - m \'[ci skip] Readme\''
                     sh 'git push jenkins'
                 }
             }
