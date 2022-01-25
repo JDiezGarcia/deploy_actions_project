@@ -23,6 +23,7 @@ pipeline {
         stage('Cypress') {
             steps {
                 script {
+                    sh 'cypress install'
                     env.cypressResult = sh(script: 'npm run cypress', returnStatus: true)
                 }
             }
