@@ -44,7 +44,7 @@ pipeline {
         stage('Create Badge') {
             steps {
                 script {
-                    env.badgeResult = sh(script: 'node jenkinsScripts/create_badge/dist/index.js', returnStatus: true)
+                    env.badgeResult = sh(script: "node jenkinsScripts/create_badge/dist/index.js ${env.cypressResult}", returnStatus: true)
                     sh 'git config user.email \'jdiez.actions@github.com\''
                     sh 'git config user.name \'JDiezActions\' '
                     withCredentials([string(credentialsId: 'TOKEN_GITHUB', variable: 'TOKEN')]) {
