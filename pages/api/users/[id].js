@@ -6,7 +6,7 @@ function handler(req, res) {
   switch (req.method) {
     case "GET":
       return getUserById();
-    case "POT":
+    case "PUT":
       return updateUser();
     case "DELETE":
       return deleteUser();
