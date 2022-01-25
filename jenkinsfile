@@ -17,9 +17,9 @@ pipeline {
         stage('Results'){
             steps {
                 script{
-                    sh "echo ${executor}"
-                    sh "echo ${subject}"
-                    sh "echo ${email}"
+                    sh "echo ${params.executor}"
+                    sh "echo ${params.subject}"
+                    sh "echo ${params.email}"
                     sh "echo ${env.lintResult}"               
                 }
             }
