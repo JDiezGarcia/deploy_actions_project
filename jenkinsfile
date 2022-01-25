@@ -20,7 +20,8 @@ pipeline {
         stage('Cypress') {
             steps {
                 script {
-                    sh 'npm install xvfb cypress --save-dev'
+                    sh 'apt-get install -y xvfb'
+                    sh 'npm install cypress --save-dev'
                     env.cypressResult = sh(script: 'npm run cypress', returnStatus: true)
                 }
             }
