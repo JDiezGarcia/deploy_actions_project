@@ -18,21 +18,27 @@ Curso: Web Applications Development
 - [Index](#index)
 - [Introduction](#introduction)
 - [Teoria Github Actions](#teoria-github-actions)
+- [Crear Credentials en Jenkins](#crear-credentials-en-jenkins)
+  - [1. Settings](#1-settings)
+  - [2. Manage Credentials](#2-manage-credentials)
+  - [3. Global Credentials](#3-global-credentials)
+  - [4. Add Credentials](#4-add-credentials)
+  - [5. Save Credentials](#5-save-credentials)
 - [Resultado de los Ultimos Test](#resultado-de-los-ultimos-test)
 - [Steps](#steps)
   - [1. Inicio Repositorio](#1-inicio-repositorio)
-  - [2. Push al Repositorio Remoto](#2-push-al-repositorio-remoto)
-  - [3. Creacion Workflow y primer Job Linter](#3-creacion-workflow-y-primer-job-linter)
-  - [4. Comprobacion del Job Linter](#4-comprobacion-del-job-linter)
-  - [5. Subida de los Arreglos del Codigo](#5-subida-de-los-arreglos-del-codigo)
-  - [6. Comprobacion Linter-Test](#6-comprobacion-linter-test)
-  - [7. Creacion Job Cypress-Test](#7-creacion-job-cypress-test)
-  - [8. Comprobacion del Job-Cypress](#8-comprobacion-del-job-cypress)
-  - [9. Arreglar el Job-Cypress y Comprobacion](#9-arreglar-el-job-cypress-y-comprobacion)
-  - [10. Creacion del Job-Badge-Readme](#10-creacion-del-job-badge-readme)
-  - [11. Creacion de action.yml](#11-creacion-de-actionyml)
-  - [12. Creacion del Index.js de Badge_Readme Action](#12-creacion-del-indexjs-de-badge_readme-action)
-  - [13. Comprobacion Job Badge-Readme](#13-comprobacion-job-badge-readme)
+  - [2. Creacion jenkinsfile y primer stage Linter](#2-creacion-jenkinsfile-y-primer-stage-linter)
+  - [3. Creacion de Pipeline y union con el repositorio git](#3-creacion-de-pipeline-y-union-con-el-repositorio-git)
+  - [4. Ejecucion Proyecto primera vez](#4-ejecucion-proyecto-primera-vez)
+  - [5. Comprobacion Stage Lint](#5-comprobacion-stage-lint)
+  - [6. Fallo Test Lint](#6-fallo-test-lint)
+  - [7. Creacion Stage Cypress](#7-creacion-stage-cypress)
+  - [8. Comprobacion Stage Cypress](#8-comprobacion-stage-cypress)
+  - [9. Fallo Test Cypress](#9-fallo-test-cypress)
+  - [10. Creacion del Stage Badge](#10-creacion-del-stage-badge)
+  - [11. Creacion Script Badge](#11-creacion-script-badge)
+  - [12. Comprobacion Stage Badge](#12-comprobacion-stage-badge)
+  - [13. Creacion Stage Deploy](#13-creacion-stage-deploy)
   - [14. Forzamos al Job a Fallar](#14-forzamos-al-job-a-fallar)
   - [15. Creamos una cuenta en Vercel para obtener tokens](#15-creamos-una-cuenta-en-vercel-para-obtener-tokens)
   - [16. Instalamos Vercel localmente](#16-instalamos-vercel-localmente)
@@ -70,6 +76,42 @@ Los Steps sirven para la ejecucion de comando o la ejecucion de actions, sean cr
 
 Las Actions son las encargadas de realizar estas funciones dichas anteriormente o los Runers que son los que mediante las maquinas virtuales seleccionadas te permiten la ejecucion de comandos.
 
+# Crear Credentials en Jenkins
+
+## 1. Settings
+
+> Para crear una credencial, desde el Dashboard vamos a Manage Jenkins
+>
+>![ScreenShot](img/c-1.png)
+
+## 2. Manage Credentials
+
+> Hacemos click en la opcion Manage Credentials
+>
+>![ScreenShot](img/c-2.png)
+
+## 3. Global Credentials
+
+> Una vez dentro, hacemos click o en Jenkins o en global, Jenkins nos dara varios dominios (en nuestro caso uno) y global nos llevara a todas las credenciales
+>
+>![ScreenShot](img/c-3.png)
+
+## 4. Add Credentials
+
+> A continuacion le daremos a crear credential
+>
+>![ScreenShot](img/c-4.png)
+> 
+> Tenemos varias opciones, por ejemplo Usuario y Password, sera un tipo utilizado para conectarse a github, despues tenemos las demas, nosotros excepto la de User y Pass, vamos a utilizar unicamente Secret Text
+>
+>![ScreenShot](img/c-5.png)
+
+## 5. Save Credentials
+
+> Ponemos el contenido de la credential y el ID de identificacion
+>
+>![ScreenShot](img/c-6.png)
+
 
 # Resultado de los Ultimos Test
 
@@ -82,189 +124,276 @@ Las Actions son las encargadas de realizar estas funciones dichas anteriormente 
 
 ## 1. Inicio Repositorio
 
-> En este paso hemos iniciado un nuevo repo de github y hemos descargado el projecto base de nextjs
+> Creacion de una nueva branch apartir del proyecto anterior con git actions
 >
 >![ScreenShot](img/1.png)
 
 ```bash
 # Comandos Utilizados:
-git init;
-wget https://github.com/dawEstacio/nextjs-blog-practica/archive/refs/heads/main.zip;
-unzip main.zip;
+git checkout -b jenkins
 ```
 
-## 2. Push al Repositorio Remoto
-> A continuacion añadiremos este projecto al repositorio remoto mediante los siguientes comandos
->
->![ScreenShot](img/2.png)
-
-```bash
-# Comandos Utilizados:
-git add.;
-git commit -m "first commit";
-git branch -N main;
-git remote add origin https://github.com/JDiezGarcia/deploy_actions_project.git;
-git push -u origin main;
+## 2. Creacion jenkinsfile y primer stage Linter
+> Creamos un archivo jenkinsfile en la raiz y añadiremos el primer stage que vamos a utilizar lint, haciendo que instale dependencias y ejecute el test, guardando el resultado de este en una variable de entorno, por ultimo un stage Results para ir viendo todos conforme vamos haciendo la pipeline
+> 
+> ![ScreenShot](img/2.png)
+```groovy
+pipeline {
+    agent any
+    parameters {
+        string(name: 'executor', description: 'What is your name?', defaultValue: 'System' )
+        string(name: 'subject', description: 'Why are you executing the pipeline?', defaultValue: 'We detected a change in the repository')
+        string(name: 'email', description: 'Put your email to recieve a notificiation with the results', defaultValue: 'fco.javier.diez.garcia@gmail.com')
+    }
+    stages {
+        stage('Lint') {
+            steps {
+                script {
+                    sh 'npm install'
+                    env.lintResult = sh(script: 'npm run lint', returnStatus: true)
+                }
+            }
+        }
+        stage('Results') {
+            steps {
+                script {
+                    sh "echo ${executor}"
+                    sh "echo ${subject}"
+                    sh "echo ${email}"
+                    sh "echo ${env.lintResult}"
+                }
+            }
+        }
+    }
+}
 ```
 
-## 3. Creacion Workflow y primer Job Linter
-> Creamos la carpeta .github/workflows y cremos el workflow project_flow.yml y añadiremos el primer job que vamos a utilizar linter-test, haciendo que este coja el codigo, instale dependencias y ejecute el test
+## 3. Creacion de Pipeline y union con el repositorio git
+> Primero en el Dashboard de Jenkins, le damos a crear elemento nuevo, ponemos el nomnbre y elegimos de que tipo va a ser, en nuestro caso pipeline.
 > 
 > ![ScreenShot](img/3.png)
-```yaml
-name: Actions Flows
-on: [push]
-jobs:
-  linter-test:
-    runs-on: ubuntu-latest
-    steps:
-      - name:  Checkout Code
-        uses: actions/checkout@v2
-
-      - name: Install Dependencies 
-        run: npm install
-      
-      - name: Run Lint
-        run: npm run lint
-```
-
-## 4. Comprobacion del Job Linter
-> Una vez ejecutado el push comprobamos que linter-test a fallado y abrimos el step para ver donde corregir los fallos
 > 
-> ![ScreenShot](img/4.png)
-> ![ScreenShot](img/5.png)
+> Una vez dentro le daremos que sea Pipile Script from SCM, en SCM git, podremos la URL del repositorio y añadiremos las credenciales para poder iniciar sesion en el repositorio git. Despues elegimos la rama en la que trabajar y en path del script. Ahora con todo esto ya podemos darle a crear.
+> 
+> ![ScreenShot](img/4-1.png)
 
 
-## 5. Subida de los Arreglos del Codigo
+## 4. Ejecucion Proyecto primera vez
 
-> Una vez puestas las dobles comillas en los archivos, movido los defaults al final de la clausula y cambiado var por let or const pasamos a subir los cambios
+> Para que el sistema de Jenkins este en marcha correctamente, con los parametros o con un sistema que controle cuando se cambia el codigo y se vuelva a ejecutar, le tendremos que dar a build la primera vez, no se le podran pasar los parametros. Despues ya te saldran los parametros como deben. En nuestro caso hemos configura 3 para que cuando envie el mensaje nos saque el nombre del ejecutor del build, si lo hace el sistema automaticamente se llamara System, despues el subject y por ultimo el email al que se le enviaran los resultados
+> 
+>![ScreenShot](img/4-2.png)
+
+## 5. Comprobacion Stage Lint
+> Como podemos comprobar el primero lo tuvimos que abortar y los siguientes dos nos han salido bien, vamos a comprobar sus logs.
+> 
+>![ScreenShot](img/5.png)
 >
+> Nos sale sin ningun error el test del lint
 >![ScreenShot](img/6.png)
-```bash
-git add .;
-git commit -m "Second";
-git push;
-```
-
-## 6. Comprobacion Linter-Test
-> Como muestra la captura ahorra tenemos todos los steps pasados.
-> 
+>
+> Y todos los echos nos salen con sus valores dados, como el resultado de la ejecucion de lint
 >![ScreenShot](img/7.png)
 
-## 7. Creacion Job Cypress-Test
-> Una vez conseguido que nos funcione el primer job pasamos a crear el segundo job cypress-test, que se ejecutara despues del anterior, cogera el codigo, ejecutara la accion de cypress, la que le pasaremos la config y lo que tiene que hacer si falla es continuar asi no dando error el step, despues los comandos para build y start, nuestro token de git, despues guardaremos la salia de este en un txt y mediante la action de Artifact lo subiremos con el nombre result.txt y el path que se encuentra.
+## 6. Fallo Test Lint
+> Para que falle el codigo de lint y comprobar sus estados vamos al codigo y cambiamos dobles comillas a simples
 > 
 >![ScreenShot](img/8.png)
-```yaml
-cypress-test:
-    runs-on: ubuntu-latest
-    needs: linter-test
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-      
-      - name: Cypress run
-        id: cypress
-        uses: cypress-io/github-action@v2
-        continue-on-error: true
-        with:
-          config-file: cypress.json
-          build: npm run build
-          start: npm start
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
-
-      - name: Save Outcome
-        run: echo ${{ steps.cypress.outcome}} > result.txt
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: result.txt
-          path: result.txt
-```
-
-## 8. Comprobacion del Job-Cypress
-> Una vez acabado el job comprobamos si funciona la action, pero como se puede ver falla
-> 
->![ScreenShot](img/9.1.png)
-
-## 9. Arreglar el Job-Cypress y Comprobacion
-> Comprobando el fallo, vemos que ponia que los endpoints de POST no lograban funcionar, mediante la edicion del archivo donde teniamos el endpoint de POST, podemos ver que el endpoint tenia POST mal escrito, lo cambiamos y como podeis ver ya pasa el test
-> 
+>
+> Ahora podremos comprobar que nos marca el error en el log
 >![ScreenShot](img/9.png)
-
-## 10. Creacion del Job-Badge-Readme
-> Ahora crearemos nosotros un job que nos permita modificar el readme para que en caso de falle el job siga con este sin problema y nos genere una badge de fallo y sino que tambien pero de success, primero que espere a que termine cypress-test, despues cogeremos el codigo, descargaremos el artifact, crearemos un output con el contenido de result.txt y despues crearemos dependiendo del resultado la badge, haciendo que la posicione en una parte exacta del readme, sin afectar el resto y por ultimo subimos los cambios para guardarlos
-> 
+>
+> Despues de todo en el ultimo log con los resultado nos sale que lint a dado 1, entonces sale failure, despues de esta comprobacion y futuras comprobaciones de fallos, revertiremos los cambios.
 >![ScreenShot](img/10.png)
-```yaml
-badge-readme:
-    runs-on: ubuntu-latest
-    if: always()
-    needs: cypress-test
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-      
-      - name: Download Changes
-        uses: actions/download-artifact@v2
-        with:
-          name: result.txt
-      
-      - name: Create Output
-        id: cypress
-        run: echo "::set-output name=cypress_outcome::$(cat result.txt)"
-      
-      - name: Create Badge
-        uses: ./.github/actions/create_badge/
-        id: readme
-        with:
-          cypress: ${{ steps.cypress.outputs.cypress_outcome }}
-      
-      - name: Upload Changes
-        run: | 
-            git config user.email "jdiez.actions@github.com"
-            git config user.name "JDiezActions"
-            git pull
-            git add .
-            git commit --allow-empty -m "Readme" 
-            git remote set-url origin https://JDiezGarcia:${{ secrets.TOKEN_GITHUB }}@github.com/JDiezGarcia/deploy_actions_project.git
-            git push
-```
-## 11. Creacion de action.yml
-> Ahora dentro de la carpeta .github creamos las carpetas actions/create_badge y dentro de el añadiremos el archivo action.yml y dentro de el le daremos un input que contendra el outcome, sea requerido y funcionara utilizando node12
+
+
+## 7. Creacion Stage Cypress
+> Primero antes de crear el nuevo stage vamos a crear un trigger para que compruebe si ha habido cambios en el codigo, ponemos cada minuto para ver que funciona despues lo cambiaremos.
 > 
 >![ScreenShot](img/11.png)
-```yaml
-name: 'create_badge'
-description: 'Creates a Badge depending of the outcome'
-inputs:
-  cypress:
-    description: 'Cypress Outcome'
-    required: true
-runs:
-  using: 'node12'
-  main: 'dist/index.js'
-```
-## 12. Creacion del Index.js de Badge_Readme Action
-> Ahora en la misma carpeta situaremos el proyecto node que contendra la action, la cual mediante el require de core para coger los inputs y fs para la lectura y escritura de archivos hacemos que coja el input, el readme y que compruebe la salida para asignarle una badge y con fs y replace añadirla al readme, despues de su creacion hacemos un build para reducir su tamaño.
-> 
->![ScreenShot](img/12.png)
 >
-> En medio de esta las dos tags se situara la badge 
+> Ahora creamos el stage para que primero instale dependencias que necesitara cypress para ejecutarse, luego hacemos la instalacion de este para poder utilizarlo, a continuacion hacemos build al proyecto y lo arrancamos en el background, por ultimo ejecutamos y guardamos su resultado. Como haremos con todos lo añadimos al Stage Result para asi comprobarlo.
+>![ScreenShot](img/12.png)
+> 
+> Por ultimo hacemos un git add, commit y push subir los cambios al repositorio.
 >![ScreenShot](img/13.png)
+```groovy
+pipeline {
+    agent any
+    triggers {
+        pollSCM('*/1 * * * *')
+    }
+    parameters {
+        string(name: 'executor', description: 'What is your name?', defaultValue: 'System' )
+        string(name: 'subject', description: 'Why are you executing the pipeline?', defaultValue: 'We detected a change in the repository')
+        string(name: 'email', description: 'Put your email to recieve a notificiation with the results', defaultValue: 'fco.javier.diez.garcia@gmail.com')
+    }
+    stages {
+        stage('Lint') {
+            steps {
+                script {
+                    sh 'npm install'
+                    env.lintResult = sh(script: 'npm run lint', returnStatus: true)
+                }
+            }
+        }
+        stage('Cypress') {
+            steps {
+                script {
+                    sh 'apt-get install -y lsof ibgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb'
+                    sh 'npm install cypress --save-dev'
+                    sh 'npm run build && npm run start &'
+                    env.cypressResult = sh(script: 'cypress run --headed', returnStatus: true)
+                }
+            }
+        }
+        stage('Results') {
+            steps {
+                script {
+                    sh "echo 'executor: ${executor}'"
+                    sh "echo 'subject: ${subject}'"
+                    sh "echo 'email: ${email}'"
+                    sh "echo 'lint: ${env.lintResult}'"
+                    sh "echo 'cypress: ${env.cypressResult}'"
+                }
+            }
+        }
+    }
+}
+```
+
+## 8. Comprobacion Stage Cypress
+> Para ir rapido y comprobar si el poll funciona iremos a git polling log y ahi veremos como ha encontrado los cambios una vez pasado el tiempo necesario
+> 
+>![ScreenShot](img/14.png)
+>
+> En la imagen a continuacion vemos los resultados del cypress test cuando hacemos log a su stage y como pone en la ultima linea, sale que han pasado todos los tests
+>![ScreenShot](img/15-1.png)
+>
+> Y si entramos en results nos sale con 0 lo cual nos indica que el stage ha salido bien
+>![ScreenShot](img/15-2.png)
+
+## 9. Fallo Test Cypress
+> Lo primero que vamos ha hacer, es ya que vamos a provocar un fallo, cambiar el trigger para que este en su tiempo correcto de comprobacion, cada 3 horas.
+> 
+>![ScreenShot](img/16.png)
+> 
+> Despues cambiamos el codigo añadiendo al post un 0 haciendo que el endpoint falle en los tests
+> 
+>![ScreenShot](img/18.png)
+> 
+> Por ultimo comprobamos que en el results nos sale un codigo 11 en vez de 1, asi que para saber si pasa algo de Failure solo comprobamos el que sea igual a 0 para success y todo lo demas failure
+> 
+>![ScreenShot](img/17.png)
+```groovy
+triggers {
+    pollSCM('1 */3 * * *')
+}
+```
+
+
+## 10. Creacion del Stage Badge 
+> Ahora utilizando los custom actions utilizados en el proyecto anterior, los modificaremos para el nuevo entorno y les haremos build para que asi no ocupe mas de lo necesario. El stage ejecutara este script el cual devolvera un resultado de la ejecucion y cambiado la badge de nuestro Readme del proyecto. A continuacion añadiremos la config de git de user y email, mediante withCredentials, utilizaremos el tocken para hacer un remote al repositorio, despues add, commit permitioendo que este vacio y dandole [ci skip] al mensaje de este y por ultimo haciendo push al origin HEAD:jenkins (Esto ultimo descubierto por Juanjo con mi asistencia)
+> 
+>![ScreenShot](img/21-2.png)
+> 
+> Ahora creamos una nueva credencial, siendo esta la primera de este proyecto, hacemos que sea secret text y su id sera el utilizado en la pipeline.
+> [COMO CREAR CREDENTIALS](#crear-credentials-en-jenkins)
+> 
+>![ScreenShot](img/20.png)
+> 
+> Al tener el trigger que comprueba los cambios del repositorio y que tenemos un commit hecho desde Jenkins pasaremos a crear un stage inicial que lo que hara sera pararlo si el ultimo commit a sido hecho por Jenkins, utilizando el mensaje del commit (Controla que este en el mensaje o no " [ci skip]"). Dependiendo del resultado Jenkins parara o no el build.
+> 
+>![ScreenShot](img/21-1.png)
+```groovy
+pipeline {
+    agent any
+    triggers {
+        pollSCM('1 */3 * * *')
+    }
+    parameters {
+        string(name: 'executor', description: 'What is your name?', defaultValue: 'System' )
+        string(name: 'subject', description: 'Why are you executing the pipeline?', defaultValue: 'We detected a change in the repository')
+        string(name: 'email', description: 'Put your email to recieve a notificiation with the results', defaultValue: 'fco.javier.diez.garcia@gmail.com')
+    }
+    stage ('Checkout SCM') {
+        steps {
+            script {
+                STAGE_NAME = 'Checkout SCM'
+
+                checkout scm
+                result = sh (script: "git log -1 | grep '.*\\[ci skip\\].*'", returnStatus: true)
+                if (result == 0) {
+                    echo ("'ci skip' spotted in git commit. Aborting.")
+                    success ("'ci skip' spotted in git commit. Aborting.")
+                }
+            }
+        }
+    }
+    stages {
+        stage('Lint') {
+            steps {
+                script {
+                    sh 'npm install'
+                    env.lintResult = sh(script: 'npm run lint', returnStatus: true)
+                }
+            }
+        }
+        stage('Cypress') {
+            steps {
+                script {
+                    sh 'apt-get install -y lsof ibgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb'
+                    sh 'npm install cypress --save-dev'
+                    sh 'npm run build && npm run start &'
+                    env.cypressResult = sh(script: 'cypress run --headed', returnStatus: true)
+                }
+            }
+        }
+        stage('Create Badge') {
+            steps {
+                script {
+                    env.badgeResult = sh(script: "node jenkinsScripts/create_badge/dist/index.js ${env.cypressResult}", returnStatus: true)
+                    sh 'git config user.email \'jdiez.actions@github.com\''
+                    sh 'git config user.name \'JDiezActions\' '
+                    withCredentials([string(credentialsId: 'TOKEN_GITHUB', variable: 'TOKEN')]) {
+                        sh 'git remote set-url origin https://JDiezGarcia:${TOKEN}@github.com/JDiezGarcia/deploy_actions_project.git'
+                    }
+                    sh 'git add .'
+                    sh 'git commit --allow-empty -m \'[ci skip] Readme\''
+                    sh 'git push origin HEAD:jenkins'
+                }
+            }
+        }
+        stage('Results') {
+            steps {
+                script {
+                    sh "echo 'executor: ${executor}'"
+                    sh "echo 'subject: ${subject}'"
+                    sh "echo 'email: ${email}'"
+                    sh "echo 'lint: ${env.lintResult}'"
+                    sh "echo 'cypress: ${env.cypressResult}'"
+                    sh "echo 'badge: ${env.badgeResult}'"
+                }
+            }
+        }
+    }
+}
+```
+## 11. Creacion Script Badge
+> Ahora dentro de la carpeta jenkinsScripts creamos las carpetas create_badge y dentro de el añadiremos el custom action solo dejando el package.json y el index.js, para modificarlo y luego hacerle 'ncc build index.js --license licenses.txt', este proceso se repetira durante todas la modificaciones de custom actions a scripts.
+> 
+>![ScreenShot](img/bad-s.png)
+>
+> El require de fs sera para la lectura y escritura de archivos, hacemos que coja el argumento 2 que le pasamos, el readme y que compruebe la salida para asignarle una badge, cambiamos a 0 la comprombacion, con fs y replace añadirla al readme.
 ```js
-const core = require('@actions/core');
 const fs = require('fs');
 
 async function create_badge() {
 
-    let outcome = core.getInput('cypress');
+    let outcome = process.argv[2];
     let readme = 'README.md'; 
     let badge;
-    console.log(outcome, (outcome == 'success'));
-    if (outcome == 'success') {
+    if (outcome == '0') {
         badge = '![badge-success](https://img.shields.io/badge/tested%20with-Cypress-04C38E.svg)'
     } else {
         badge = '![badge-failure](https://img.shields.io/badge/test-failure-red)'
@@ -282,16 +411,31 @@ async function create_badge() {
     });
 
 }
-
 create_badge();
 ```
-
-## 13. Comprobacion Job Badge-Readme
-> Una vez hecho todo lo anterior comprobamos que todo ha salid bien y que se ha creado la badge sin ningun problema y se han pasado todos los steps y jobs anteriores.
+## 12. Comprobacion Stage Badge
+> Primero vemos que todos los test se han parado al utilizar el stage para que no continue, haciendo asi que no se realizara otro commit detras de otro.
 > 
->![ScreenShot](img/14.png)
->![ScreenShot](img/15.png)
+>![ScreenShot](img/22.png)
+>
+> Despues veriamos el Results con todos pasando su ejecucion.
+>![ScreenShot](img/23.png)
+>
+> Podemos ver que se mantiene el badge, ya que practicamente es el mismo funcionamiento del custom action.
+> 
+>![ScreenShot](img/badg-2.png)
 
+
+## 13. Creacion Stage Deploy
+> Ahora creamos todas las credenciales necesarias, siendo estas, id_project, id_org y el token.
+> 
+>![ScreenShot](img/24.png)
+>
+> Ahora creamos todas las credenciales necesarias, siendo estas, id_project, id_org y el token.
+> 
+>![ScreenShot](img/27.png)
+```groovy
+```
 
 ## 14. Forzamos al Job a Fallar
 > Para poder comprobar el cambio de badge volvemos a poner POST mal en los archivos y podemos comprobar que todos sale bien gracias al continue-on-error y que el result es failure y se cambia la badge.
