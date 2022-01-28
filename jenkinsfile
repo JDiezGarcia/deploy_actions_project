@@ -71,7 +71,7 @@ pipeline {
                         )
                     }
                 }
-            }
+            } 
         }
         stage('Results') {
             steps {
