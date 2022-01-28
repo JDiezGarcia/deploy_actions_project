@@ -10,7 +10,7 @@ const destinationEmail = process.env.DESTINATION_E;
 var transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
-        user: `${originEmail}}`,
+        user: `${originEmail}`,
         pass: `${originPass}`
     }
 });
