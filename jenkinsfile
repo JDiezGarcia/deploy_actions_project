@@ -86,7 +86,7 @@ pipeline {
                             ]) {
                                 env.emailDest = params.email
                                 env.emailResult = sh(
-                                    script: 'ORIGIN_E=${EMAIL} ORIGIN_P=${PASS} node jenkinsScripts/email_results/dist/index.js', 
+                                    script: 'env ORIGIN_E=${EMAIL} ORIGIN_P=${PASS} node jenkinsScripts/email_results/dist/index.js', 
                                     returnStatus: true
                                 )
                             } 
