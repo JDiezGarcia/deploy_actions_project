@@ -18,11 +18,11 @@ var transporter = nodemailer.createTransport({
 var mailOptions = {
     from: `${originEmail}`, 
     to: `${destinationEmail}`,
-    subject: 'Resultado del workdflow ejecutado',
+    subject: `${process.env.subjEmail}`,
     html: `
     <div>
-        <p>Se ha realizado un push en la rama main que ha provocado la ejecución del workflow 
-        project_flow con los siguientes resultados: </p>
+        <p>Se ha realizado un build en Jenkins
+        por el user (${process.execUser}) con los siguientes resultados: </p>
         <br/>
         <br/>
         <span>- linter: ${linter}</span><br/>

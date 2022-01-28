@@ -1,11 +1,17 @@
-const core = require('@actions/core');
 const { TwitterClient } = require('twitter-api-client');
+const linter = formatResult(process.env.lintResult);
+const cypress = formatResult(process.env.cypressResult);
+const badge = formatResult(process.env.badgeResult);
+const deploy = formatResult(process.env.deployResult);
+const email = formatResult(process.env.emailResult);
+
 const config = {
-    apiKey: `${core.getInput('consumer_key')}`,
-    apiSecret: `${core.getInput('consumer_secret')}`,
-    accessToken: `${core.getInput('access_key')}`,
-    accessTokenSecret: `${core.getInput('access_secret')}`
+    apiKey: `${process.env.C_K}`,
+    apiSecret: `${process.env.C_S}`,
+    accessToken: `${process.env.A_K}`,
+    accessTokenSecret: `${process.env.A_S}`
 };
+
 const twitterClient = new TwitterClient(config);
 
 function actualDate(){
@@ -18,25 +24,37 @@ function actualDate(){
     let seconds = date_ob.getSeconds();
     
     return year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds
-};
+}
+
 function PostTweet(){
     
     let data = 
         `RESULTS JOBS:
         [Results-Date: ${actualDate()}\n]
-        linter: ${core.getInput('linter')}\n
-        cypress: ${core.getInput('cypress')}\n
-        badge: ${core.getInput('badge')}\n
-        deploy: ${core.getInput('deploy')}\n
-        email: ${core.getInput('email')}`;
+        linter: ${linter}\n
+        cypress: ${cypress}\n
+        badge: ${badge}\n
+        deploy: ${deploy}\n
+        email: ${email}`;
     
     twitterClient.tweets.statusesUpdate({
         status: data
-    }).then(
-        console.log("Tweeted!")
+    }).then( () => {
+        console.log("Tweeted!"),
+        process.exit(0)
+    }
     ).catch(err => {
         console.error(err)
+        process.exit(1);
     })
-};
+}
+
+function formatResult(result) {
+    if (result == 0) {
+        return "Success";
+    } else {
+        return "Failure";
+    }
+}
 
 PostTweet();
