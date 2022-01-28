@@ -81,12 +81,13 @@ pipeline {
                     steps {
                         script {
                             withCredentials([
-                                string(credentialsId: 'ORIGIN_EMAIL', variable: 'EMAIL'),
-                                string(credentialsId: 'ORIGIN_PASS', variable: 'PASS'),
+                                string(credentialsId: 'ORIGIN_EMAIL', variable: 'EMAIL_OR'),
+                                string(credentialsId: 'ORIGIN_PASS', variable: 'PASS_OR'),
                             ]) {
                                 env.emailResult = sh(
-                                    script: 'node jenkinsScripts/email_results/dist/index.js ${EMAIL} ${PASS} '${params.email}'', 
-                                    returnStatus: true)
+                                    script: 'node jenkinsScripts/email_results/dist/index.js ${EMAIL_OR} ${PASS_OR} ${params.email}', 
+                                    returnStatus: true
+                                )
                             }
                         }
                     }
