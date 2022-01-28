@@ -5,7 +5,7 @@ const badge = formatResult(process.env.badgeResult);
 const deploy = formatResult(process.env.deployResult);
 const originEmail = process.env.ORIGIN_E;
 const originPass = process.env.ORIGIN_P;
-const destinationEmail = process.env.DESTINATION_E;
+const destinationEmail = process.env.emailDest;
 
 var transporter = nodemailer.createTransport({
     service: 'Gmail',
