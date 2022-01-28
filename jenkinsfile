@@ -61,7 +61,7 @@ pipeline {
                 stage('Deploy') {
                     when {
                         expression {
-                            return lintResult == 0 && cypressResult == 0
+                            return lintResult === true && cypressResult === true
                         }
                     }
                     steps {
