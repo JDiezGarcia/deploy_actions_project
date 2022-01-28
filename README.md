@@ -116,7 +116,7 @@ Las Actions son las encargadas de realizar estas funciones dichas anteriormente 
 # Resultado de los Ultimos Test
 
 <!---Start place for the badge -->
-![badge-failure](https://img.shields.io/badge/test-failure-red)
+![badge-success](https://img.shields.io/badge/tested%20with-Cypress-04C38E.svg)
 <!---End place for the badge -->
 
 # Steps
