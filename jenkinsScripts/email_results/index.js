@@ -22,7 +22,7 @@ var mailOptions = {
     html: `
     <div>
         <p>Se ha realizado un build en Jenkins
-        por el user (${process.env.execUser}) con los siguientes resultados: </p>
+        por el user (${process.env.exectUser}) con los siguientes resultados: </p>
         <br/>
         <br/>
         <span>- linter: ${linter}</span><br/>
