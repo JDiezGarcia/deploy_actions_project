@@ -85,7 +85,7 @@ pipeline {
                                 string(credentialsId: 'ORIGIN_PASS', variable: 'PASS'),
                             ]) {
                                 env.emailResult = sh(
-                                    script: 'node jenkinsScripts/email_results/dist/index.js ${EMAIL} ${PASS} ${params.email}', 
+                                    script: 'node jenkinsScripts/email_results/dist/index.js ${EMAIL} ${PASS} '${params.email}'', 
                                     returnStatus: true)
                             }
                         }
