@@ -56,6 +56,23 @@ pipeline {
                 }
             }
         }
+        stage('Vercel') {
+            steps {
+                sh 'npm install -g vercel'
+                script {
+                    withCredentials([
+                        string(credentialsId: 'VERCEL_ORG', variable: 'ORG_ID'),
+                        string(credentialsId: 'VERCEL_TOKEN', variable: 'VERCEL'),
+                        string(credentialsId: 'VERCEL_PROJECT', variable: 'PROJECT_ID')
+                    ]) {
+                        env.deployResult = sh(
+                            script: 'VERCEL_ORG_ID=${ORG_ID} VERCEL_PROJECT_ID=${PROJECT_ID} vercel --production --scope jdiezgarcia --token=${VERCEL} .',
+                            returnStatus: true
+                        )
+                    }
+                }
+            }
+        }
         stage('Results') {
             steps {
                 script {
@@ -65,6 +82,7 @@ pipeline {
                     sh "echo 'lint: ${env.lintResult}'"
                     sh "echo 'cypress: ${env.cypressResult}'"
                     sh "echo 'badge: ${env.badgeResult}'"
+                    sh "echo 'deploy: ${env.deployResult}'"
                 }
             }
         }
