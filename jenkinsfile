@@ -63,20 +63,27 @@ pipeline {
                         sh 'npm install -g vercel'
                         script {
                             withCredentials([
-                        string(credentialsId: 'VERCEL_ORG', variable: 'ORG_ID'),
-                        string(credentialsId: 'VERCEL_TOKEN', variable: 'VERCEL'),
-                        string(credentialsId: 'VERCEL_PROJECT', variable: 'PROJECT_ID')
-                    ]) {
+                                string(credentialsId: 'VERCEL_ORG', variable: 'ORG_ID'),
+                                string(credentialsId: 'VERCEL_TOKEN', variable: 'VERCEL'),
+                                string(credentialsId: 'VERCEL_PROJECT', variable: 'PROJECT_ID')
+                            ]) {
                                 env.deployResult = sh(
-                            script: 'VERCEL_ORG_ID=${ORG_ID} VERCEL_PROJECT_ID=${PROJECT_ID} vercel --prod --scope jdiezgarcia --token=${VERCEL} .',
-                            returnStatus: true
-                        )
-                    }
+                                    script: 'VERCEL_ORG_ID=${ORG_ID} VERCEL_PROJECT_ID=${PROJECT_ID} vercel --prod --scope jdiezgarcia --token=${VERCEL} .',
+                                    returnStatus: true
+                                )
+                            }
                         }
                     }
                 }
             }
         }
+        stage('Send Email') {
+                    steps {
+                        script {
+                            env.emailResult = sh(script: "node jenkinsScripts/email_results/dist/index.js", returnStatus: true)
+                        }
+                    }
+                }
         stage('Results') {
             steps {
                 script {
@@ -87,6 +94,7 @@ pipeline {
                     sh "echo 'cypress: ${env.cypressResult}'"
                     sh "echo 'badge: ${env.badgeResult}'"
                     sh "echo 'deploy: ${env.deployResult}'"
+                    sh "echo 'email: ${env.emailResult}'"
                 }
             }
         }
