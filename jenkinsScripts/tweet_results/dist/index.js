@@ -4351,7 +4351,7 @@ function actualDate(){
 function PostTweet(){
     
     let data = 
-        `RESULTS JOBS:
+        `RESULTS JOBS JENKINS:
         [Results-Date: ${actualDate()}\n]
         linter: ${linter}\n
         cypress: ${cypress}\n
