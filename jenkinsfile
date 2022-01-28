@@ -66,7 +66,7 @@ pipeline {
                         string(credentialsId: 'VERCEL_PROJECT', variable: 'PROJECT_ID')
                     ]) {
                         env.deployResult = sh(
-                            script: 'VERCEL_ORG_ID=${ORG_ID} VERCEL_PROJECT_ID=${PROJECT_ID} vercel --production --scope jdiezgarcia --token=${VERCEL} .',
+                            script: 'VERCEL_ORG_ID=${ORG_ID} VERCEL_PROJECT_ID=${PROJECT_ID} vercel --scope jdiezgarcia --token=${VERCEL} .',
                             returnStatus: true
                         )
                     }
