@@ -80,7 +80,7 @@ pipeline {
         stage('Send Email') {
                     steps {
                         script {
-                            env.emailDest = ${params.email}
+                            env.emailDest = params.email
                             withCredentials([
                                 string(credentialsId: 'ORIGIN_EMAIL', variable: 'EMAIL'),
                                 string(credentialsId: 'ORIGIN_PASS', variable: 'PASS'),
