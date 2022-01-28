@@ -89,7 +89,7 @@ pipeline {
                                     script: 'ORIGIN_E=${EMAIL} ORIGIN_P=${PASS} node jenkinsScripts/email_results/dist/index.js', 
                                     returnStatus: true
                                 )
-                            }
+                            } 
                         }
                     }
                 }
