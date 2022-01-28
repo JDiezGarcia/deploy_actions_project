@@ -3,9 +3,9 @@ const linter = formatResult(process.env.lintResult);
 const cypress = formatResult(process.env.cypressResult);
 const badge = formatResult(process.env.badgeResult);
 const deploy = formatResult(process.env.deployResult);
-const originEmail = process.argv[2];
-const originPass = process.argv[3];
-const destinationEmail = process.argv[4];
+const originEmail = process.env.ORIGIN_E;
+const originPass = process.env.ORIGIN_P;
+const destinationEmail = process.env.DESTINATION_E;
 
 var transporter = nodemailer.createTransport({
     service: 'Gmail',
