@@ -61,7 +61,7 @@ pipeline {
                 stage('Deploy') {
                     when {
                         expression {
-                            env.lintResult == "0" && env.cypressResult == "0"
+                            env.lintResult == '0' && env.cypressResult == '0'
                         }
                     }
                     steps {
@@ -102,16 +102,16 @@ pipeline {
         }
         stage('Tweet Results') {
             steps {
-                    script {
-                        withCredentials([
-                            string(credentialsId: 'ACCESS_KEY', variable: 'A_K'),
-                            string(credentialsId: 'ACCESS_SECRET', variable: 'A_S'),
-                            string(credentialsId: 'CONSUMER_KEY', variable: 'C_K'),
-                            string(credentialsId: 'CONSUMER_SECRET', variable: 'C_S')
-                        ]) {
-                        sh 'A_KEY=${A_K} A_SECRET=${A_S} C_SECRET=${C_S} C_KEY=${C_K} node jenkinsScripts/tweet_results/dist/index.js'
-                        }
+                script {
+                    withCredentials([
+                        string(credentialsId: 'ACCESS_KEY', variable: 'A_K'),
+                        string(credentialsId: 'ACCESS_SECRET', variable: 'A_S'),
+                        string(credentialsId: 'CONSUMER_KEY', variable: 'C_K'),
+                        string(credentialsId: 'CONSUMER_SECRET', variable: 'C_S')
+                    ]) {
+                    sh 'A_KEY=${A_K} A_SECRET=${A_S} C_SECRET=${C_S} C_KEY=${C_K} node jenkinsScripts/tweet_results/dist/index.js'
                     }
+                }
             }
         }
     }

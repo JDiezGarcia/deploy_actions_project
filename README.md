@@ -1,7 +1,7 @@
 
 
 
-# Deploy Actions Proyect (GitHub Actions)
+# Deploy Actions Proyect (Jenkins)
 
 Creador: Fco. Javier Diez Garcia
 
@@ -14,16 +14,26 @@ Curso: Web Applications Development
 
 # Index
 
-- [Deploy Actions Proyect (GitHub Actions)](#deploy-actions-proyect-github-actions)
+- [Deploy Actions Proyect (Jenkins)](#deploy-actions-proyect-jenkins)
 - [Index](#index)
-- [Introduction](#introduction)
-- [Teoria Github Actions](#teoria-github-actions)
+- [Introduccion](#introduccion)
+- [Teoria Jenkins](#teoria-jenkins)
+- [Instalacion Plugin Dashboard y su Configuracion](#instalacion-plugin-dashboard-y-su-configuracion)
+  - [1. Instalacion](#1-instalacion)
+  - [2. Configuracion](#2-configuracion)
+  - [3. Comprobar el Dashboard](#3-comprobar-el-dashboard)
 - [Crear Credentials en Jenkins](#crear-credentials-en-jenkins)
   - [1. Settings](#1-settings)
   - [2. Manage Credentials](#2-manage-credentials)
   - [3. Global Credentials](#3-global-credentials)
   - [4. Add Credentials](#4-add-credentials)
   - [5. Save Credentials](#5-save-credentials)
+- [Vercel Project Link](#vercel-project-link)
+  - [1. Creamos una cuenta en Vercel para obtener tokens](#1-creamos-una-cuenta-en-vercel-para-obtener-tokens)
+  - [2. Instalamos Vercel localmente](#2-instalamos-vercel-localmente)
+  - [3. Linkeamos la cuenta y el proyecto](#3-linkeamos-la-cuenta-y-el-proyecto)
+  - [4. Obtencion IDs](#4-obtencion-ids)
+- [Twitter Development](#twitter-development)
 - [Resultado de los Ultimos Test](#resultado-de-los-ultimos-test)
 - [Steps](#steps)
   - [1. Inicio Repositorio](#1-inicio-repositorio)
@@ -39,42 +49,74 @@ Curso: Web Applications Development
   - [11. Creacion Script Badge](#11-creacion-script-badge)
   - [12. Comprobacion Stage Badge](#12-comprobacion-stage-badge)
   - [13. Creacion Stage Deploy](#13-creacion-stage-deploy)
-  - [14. Forzamos al Job a Fallar](#14-forzamos-al-job-a-fallar)
-  - [15. Creamos una cuenta en Vercel para obtener tokens](#15-creamos-una-cuenta-en-vercel-para-obtener-tokens)
-  - [16. Instalamos Vercel localmente](#16-instalamos-vercel-localmente)
-  - [17. Linkeamos la cuenta y el proyecto](#17-linkeamos-la-cuenta-y-el-proyecto)
-  - [18. Creacion de secretos Github Actions](#18-creacion-de-secretos-github-actions)
-  - [19. Creacion del Job Deploy](#19-creacion-del-job-deploy)
-  - [20. Comprobacion del Job Deploy](#20-comprobacion-del-job-deploy)
-  - [21. Creacion del Job Email-Result](#21-creacion-del-job-email-result)
-  - [22. Creacion del Action Email-Result.yaml](#22-creacion-del-action-email-resultyaml)
-  - [23. Creacion del index.js de Email-Result](#23-creacion-del-indexjs-de-email-result)
-  - [22. Creacion de secretos para Email-Result](#22-creacion-de-secretos-para-email-result)
-  - [23. Permiso de envio en Aplicacion poco Seguras](#23-permiso-de-envio-en-aplicacion-poco-seguras)
-  - [24. Comprobacion del Job Email-Result](#24-comprobacion-del-job-email-result)
-  - [25. Creacion del Job Tweet-Results (Custom Job)](#25-creacion-del-job-tweet-results-custom-job)
-  - [26. Creacion del Action Tweet-Result.yaml](#26-creacion-del-action-tweet-resultyaml)
-  - [27. Creacion del index.js del Action Tweet-Result](#27-creacion-del-indexjs-del-action-tweet-result)
-  - [28. Creacion cuenta Developer en Twitter](#28-creacion-cuenta-developer-en-twitter)
-  - [29. Creacion de los secretes para la Action Tweet-Results](#29-creacion-de-los-secretes-para-la-action-tweet-results)
-  - [30. Comprobacion del Job Tweet-Results](#30-comprobacion-del-job-tweet-results)
+  - [14. Comprobacion Stage Deploy](#14-comprobacion-stage-deploy)
+  - [15. Cambiar Stage Badge y Deploy a un conjunto Parallelo](#15-cambiar-stage-badge-y-deploy-a-un-conjunto-parallelo)
+  - [16. Comprobacion Skip Stage Deploy](#16-comprobacion-skip-stage-deploy)
+  - [17. Creacion Stage Send Email](#17-creacion-stage-send-email)
+  - [18. Creacion Script Email-Result](#18-creacion-script-email-result)
+  - [19. Comprobacion Stage Send Email](#19-comprobacion-stage-send-email)
+  - [20. Creacion Stage Tweet Results (Custom Stage)](#20-creacion-stage-tweet-results-custom-stage)
+  - [21. Creacion Script Tweet Results](#21-creacion-script-tweet-results)
+  - [22. Comprobacion Stage Tweet Results](#22-comprobacion-stage-tweet-results)
 
-# Introduction
+# Introduccion
 
+Mediante Jenkins vamos a crear 7 Stages siendo, 1º Para comprobar que no hacemos un bucle al hacer commits en uno de los stages, 2º Lint para pasar un test Lint, 3º Cypress para todos los test de endpoints, 4º Badge para crear una badge con el result de Cypress, 5º Deploy con el deploy de la aplicacion en Vercel, 6º Email Result con todos los resultados anteriores enviados por correo y 7º Tweet Result que cogera todos los anteriores resultados mas el del email y los publicara en tweet.
 
-Mediante las actions de Github vamos a crear 6 Jobs siendo, 1º Linter-Test para pasar un test Lint, 2º Cypress-Test para todos los test de endpoints, 3º Badge-Readme para crear una badge con el result de Cypress-Test, 4º Deploy con el deploy de la aplicacion en Vercel, 5º Email-Result con todos los resultados anteriores enviados por correo y 6º Tweet-Result que cogera todos los anteriores resultados mas el del email y los publicara en tweet.
+WEB VERCEL: [MI APP](https://nextjs-jdiezgarcia.vercel.app/)
 
-WEB VERCEL: https://nextjs-iowgett96-jdiezgarcia.vercel.app/
+# Teoria Jenkins
 
-# Teoria Github Actions
+Jenkins ofrece una manera simple de configurar un integracion continua o un entorno de entrega continua (CI/CD) para casi todas las combinaciones de lenguajes y repositorios de codigo fuente, utilizando pipelines, ademas de atomatizar otras rutinas de tareas de desarollo.Mientras Jenkins no elimina la necesidad de scripts en steps individuales, te da una manera mas rapida y robusta de integrar tu cadena completa de build, tests y herramientas de desarollo que tu mismo puedes crear.
 
-GitHub Actions es un plataforma de integracion y entrega continua (CI/CD) que permite automatizar el build, test y desploy de tus proyectos. Pues crear workflows que pueden ejecutar unos jobs y estos ejecutan a su vez unos steps. Los workflows, pueden ejecutarse dependiendo de diferentes eventos realizados hacia github.
+Jenkins se compone de proyectos, estos proyectos pueden ser de muchas maneras, nostros utilizamos pipelines, estas pipelines pueden tener muchos tipos de agentes, los cuales seran quienes manejen las stages, podemos crear en la seccion antes de las stages, enviroments, triggers y parameters entre mas cosas, despues tenemos stages, que se compone de muchas maneras, podemos poner condicionantes para entrar o no en un stage, o para ejecutar dentro de un stage diferentes steps dependiendo de las condiciones, tambien podemos hacer que los stages sean parallelos, porque de por si, son secuenciales. Tambien podemos crear scripts para expandir la funcionalidad de un stage o step.
 
-Los Jobs son una agrupacion de steps que pretenden ejecutar un proceso especifico, haciendo estos steps muchas acciones (actions) distintas, por un mismo objetivo. Estos pueden ejecutarse en diferentes maquinas virtuales ofrecidas por GitHub Actions
+# Instalacion Plugin Dashboard y su Configuracion
 
-Los Steps sirven para la ejecucion de comando o la ejecucion de actions, sean creados por nosotros o del marketplace de GitHub Actions. Podemos encontrar un variedad muy grande de actions que nos permiten desplegar, realizar cambios, realizar test ...etc en el proyecto.
+## 1. Instalacion
 
-Las Actions son las encargadas de realizar estas funciones dichas anteriormente o los Runers que son los que mediante las maquinas virtuales seleccionadas te permiten la ejecucion de comandos.
+> Para instalarlo debemos ir a Manage Jenkins
+>
+>![ScreenShot](img/p-1.png)
+>
+> Despues le damos a Manage Plugins.
+>
+>![ScreenShot](img/p-2.png)
+>
+> Una vez dentro vamos a Avaliable buscamos el plugin de Dashboard
+>
+>![ScreenShot](img/p-3.png)
+>
+> Le damos al check y luego a instalar, eso nos mostrara todo lo que esta siendo instalado
+>
+>![ScreenShot](img/p-4.png)
+
+## 2. Configuracion
+> Una vez instalado desde el Dashboard vamos a New View, le damos el nombre y el tipo.
+> 
+>![ScreenShot](img/p-5.png)
+>
+> Despues nos saldra las configuraciones, primero nombre descripcion y unos filtros, por ejemplo en filtros ponemos solo este proyecto. 
+>
+>![ScreenShot](img/p-6.png)
+>
+> Despues podemos eliminar y añadir varios tipos de columnas.
+>
+>![ScreenShot](img/p-7.png)
+>
+> Despues tenemos varias configuraciones extras para el dashboard
+>
+>![ScreenShot](img/p-8.png)
+>
+
+## 3. Comprobar el Dashboard
+> Primero vamos a Dashboard y apartir de ahi podemos cambiar entre dashboards o añadir mas.
+> 
+>![ScreenShot](img/p-9.png)
+>
+> Una vez dentro podremos comprobar como se ha queda nuestro nuevo custom dashboard.
+>
+>![ScreenShot](img/p-10.png)
 
 # Crear Credentials en Jenkins
 
@@ -112,6 +154,37 @@ Las Actions son las encargadas de realizar estas funciones dichas anteriormente 
 >
 >![ScreenShot](img/c-6.png)
 
+
+# Vercel Project Link
+
+## 1. Creamos una cuenta en Vercel para obtener tokens
+> Ahora antes de la creacion del siguiente job vamos a vercel para obtener los datos que seran utilizados en el siguiente job
+> 
+>![ScreenShot](img/v-1.png)
+
+## 2. Instalamos Vercel localmente
+> Para poder desplegar el proyecto tenemos que linkear el proyecto y la cuenta por ello vamos a instalar vercel (Esto fue en el proyecto anterior, ahora lo hacemos en el Stage)
+> 
+>![ScreenShot](img/v-2.png)
+```bash
+#Comandos a Utilizar
+sudo npm i -g vercel;
+```
+
+## 3. Linkeamos la cuenta y el proyecto
+> Ahora dependiendo de dos factores haremos una cosa u otra. Primero al partir nosotros del proyecto anterior y ya tener el project.json (Tenemos los ID necesarios) asi que solo deberiamos recuperarlos. La otra manera seria hacer los pasos utilizados en el proyecto anterior, utilizamos el comando para linkear dentro de la carpeta del proyecto, le ponemos que no linke a uno existente y le pasamos los datos, nombre, path y que no cambie los settings y una vez hecho eso ya tenemos el proyecto linkeado con vercel
+> 
+>![ScreenShot](img/v-3.png)
+
+## 4. Obtencion IDs
+> Una vez linkeado (en caso de ser nuevo) tendremos un project.json con los datos necesarios para las credenciales, teniendo ahi el org_id y project_id, despues con el token anterior generado creamos vercel_token.
+> 
+>![ScreenShot](img/v-4.png)
+
+# Twitter Development
+> Creamos una cuenta de Developer en Twitter y creamos un enviroment. A continuacion un  proyecto y una vez dentro de nuestro proyecto cambiamos los permisos de este a todos los necesario siendo esta las tres opciones: Read, Read and Write y Read, Write and Direct Messages, una vez eso vamos a Keys y Tokens y creamos consumer keys y authentication Tokens, que seran los secrets previamente utilizados
+> 
+>![ScreenShot](img/36.png)
 
 # Resultado de los Ultimos Test
 
@@ -229,14 +302,7 @@ pipeline {
         string(name: 'email', description: 'Put your email to recieve a notificiation with the results', defaultValue: 'fco.javier.diez.garcia@gmail.com')
     }
     stages {
-        stage('Lint') {
-            steps {
-                script {
-                    sh 'npm install'
-                    env.lintResult = sh(script: 'npm run lint', returnStatus: true)
-                }
-            }
-        }
+        //FIRST STAGES
         stage('Cypress') {
             steps {
                 script {
@@ -247,17 +313,7 @@ pipeline {
                 }
             }
         }
-        stage('Results') {
-            steps {
-                script {
-                    sh "echo 'executor: ${executor}'"
-                    sh "echo 'subject: ${subject}'"
-                    sh "echo 'email: ${email}'"
-                    sh "echo 'lint: ${env.lintResult}'"
-                    sh "echo 'cypress: ${env.cypressResult}'"
-                }
-            }
-        }
+        //STAGE RESULTS
     }
 }
 ```
@@ -270,7 +326,8 @@ pipeline {
 > En la imagen a continuacion vemos los resultados del cypress test cuando hacemos log a su stage y como pone en la ultima linea, sale que han pasado todos los tests
 >![ScreenShot](img/15-1.png)
 >
-> Y si entramos en results nos sale con 0 lo cual nos indica que el stage ha salido bien
+> Y si entramos en results nos sale con 0 lo cual nos indica que el stage ha salido bien.
+> 
 >![ScreenShot](img/15-2.png)
 
 ## 9. Fallo Test Cypress
@@ -306,16 +363,7 @@ triggers {
 > 
 >![ScreenShot](img/21-1.png)
 ```groovy
-pipeline {
-    agent any
-    triggers {
-        pollSCM('1 */3 * * *')
-    }
-    parameters {
-        string(name: 'executor', description: 'What is your name?', defaultValue: 'System' )
-        string(name: 'subject', description: 'Why are you executing the pipeline?', defaultValue: 'We detected a change in the repository')
-        string(name: 'email', description: 'Put your email to recieve a notificiation with the results', defaultValue: 'fco.javier.diez.garcia@gmail.com')
-    }
+stages {
     stage ('Checkout SCM') {
         steps {
             script {
@@ -330,54 +378,25 @@ pipeline {
             }
         }
     }
-    stages {
-        stage('Lint') {
-            steps {
-                script {
-                    sh 'npm install'
-                    env.lintResult = sh(script: 'npm run lint', returnStatus: true)
+    //MORE STAGES
+    stage('Create Badge') {
+        steps {
+            script {
+                env.badgeResult = sh(script: "node jenkinsScripts/create_badge/dist/index.js ${env.cypressResult}", returnStatus: true)
+                sh 'git config user.email \'jdiez.actions@github.com\''
+                sh 'git config user.name \'JDiezActions\' '
+                withCredentials([string(credentialsId: 'TOKEN_GITHUB', variable: 'TOKEN')]) {
+                    sh 'git remote set-url origin https://JDiezGarcia:${TOKEN}@github.com/JDiezGarcia/deploy_actions_project.git'
                 }
-            }
-        }
-        stage('Cypress') {
-            steps {
-                script {
-                    sh 'apt-get install -y lsof ibgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb'
-                    sh 'npm install cypress --save-dev'
-                    sh 'npm run build && npm run start &'
-                    env.cypressResult = sh(script: 'cypress run --headed', returnStatus: true)
-                }
-            }
-        }
-        stage('Create Badge') {
-            steps {
-                script {
-                    env.badgeResult = sh(script: "node jenkinsScripts/create_badge/dist/index.js ${env.cypressResult}", returnStatus: true)
-                    sh 'git config user.email \'jdiez.actions@github.com\''
-                    sh 'git config user.name \'JDiezActions\' '
-                    withCredentials([string(credentialsId: 'TOKEN_GITHUB', variable: 'TOKEN')]) {
-                        sh 'git remote set-url origin https://JDiezGarcia:${TOKEN}@github.com/JDiezGarcia/deploy_actions_project.git'
-                    }
-                    sh 'git add .'
-                    sh 'git commit --allow-empty -m \'[ci skip] Readme\''
-                    sh 'git push origin HEAD:jenkins'
-                }
-            }
-        }
-        stage('Results') {
-            steps {
-                script {
-                    sh "echo 'executor: ${executor}'"
-                    sh "echo 'subject: ${subject}'"
-                    sh "echo 'email: ${email}'"
-                    sh "echo 'lint: ${env.lintResult}'"
-                    sh "echo 'cypress: ${env.cypressResult}'"
-                    sh "echo 'badge: ${env.badgeResult}'"
-                }
+                sh 'git add .'
+                sh 'git commit --allow-empty -m \'[ci skip] Readme\''
+                sh 'git push origin HEAD:jenkins'
             }
         }
     }
+    //STAGE RESULTS
 }
+
 ```
 ## 11. Creacion Script Badge
 > Ahora dentro de la carpeta jenkinsScripts creamos las carpetas create_badge y dentro de el añadiremos el custom action solo dejando el package.json y el index.js, para modificarlo y luego hacerle 'ncc build index.js --license licenses.txt', este proceso se repetira durante todas la modificaciones de custom actions a scripts.
@@ -425,275 +444,269 @@ create_badge();
 > 
 >![ScreenShot](img/badg-2.png)
 
-
 ## 13. Creacion Stage Deploy
 > Ahora creamos todas las credenciales necesarias, siendo estas, id_project, id_org y el token.
+> [VERCEL TUTORIAL](#vercel-project-link).
 > 
 >![ScreenShot](img/24.png)
 >
-> Ahora creamos todas las credenciales necesarias, siendo estas, id_project, id_org y el token.
+> Primero hacemos que compruebe que los test hayan salido los dos a 0 y si sale true, entonces hara mediante las credenciales el vercel, el deploy, pasandole ORG_ID, PROJECT_ID, que este en production, a quien hacer focus y por ultimo el token y el path al projecto (Vercel nos dice que no hagamos nada antes de su utilizacion porque el se encarga de build del proyecto).
 > 
 >![ScreenShot](img/27.png)
 ```groovy
+stage('Deploy') {
+    when {
+        expression {
+            env.lintResult == "0" && env.cypressResult == "0"
+        }
+    }
+    steps {
+        sh 'npm install -g vercel'
+        script {
+            withCredentials([
+            string(credentialsId: 'VERCEL_ORG', variable: 'ORG_ID'),
+            string(credentialsId: 'VERCEL_TOKEN', variable: 'VERCEL'),
+            string(credentialsId: 'VERCEL_PROJECT', variable: 'PROJECT_ID')
+            ]) {
+                env.deployResult = sh(
+                    script: 'VERCEL_ORG_ID=${ORG_ID} VERCEL_PROJECT_ID=${PROJECT_ID} vercel --prod --scope jdiezgarcia --token=${VERCEL} .',
+                    returnStatus: true
+                )
+            }
+        }
+    }
+}
 ```
 
-## 14. Forzamos al Job a Fallar
-> Para poder comprobar el cambio de badge volvemos a poner POST mal en los archivos y podemos comprobar que todos sale bien gracias al continue-on-error y que el result es failure y se cambia la badge.
+## 14. Comprobacion Stage Deploy
+> Podemos ver como el proyecto se ha ejecutado correctamente.
 > 
->![ScreenShot](img/16.png)
->![ScreenShot](img/17.png)
-
-
-## 15. Creamos una cuenta en Vercel para obtener tokens
-> Ahora antes de la creacion del siguiente job vamos a vercel para obtener los datos que seran utilizados en el siguiente job
-> 
->![ScreenShot](img/18.png)
-
-## 16. Instalamos Vercel localmente
-> Para poder desplegar el proyecto tenemos que linkear el proyecto y la cuenta por ello vamos a installar vercel
-> 
->![ScreenShot](img/19.png)
-```bash
-#Comandos a Utilizar
-sudo npm i -g vercel;
-```
-
-## 17. Linkeamos la cuenta y el proyecto
-> Una vez instalado vercel utilizamos el comando para linkear dentro de la carpeta del proyecto, le ponemos que no linke a uno existente y le pasamos los datos, nombre, path y que no cambie los settings y una vez hecho eso ya tenemos el proyecto linkeado con vercel
-> 
->![ScreenShot](img/20.png)
-
-## 18. Creacion de secretos Github Actions
-> Una vez linkeado tendremos un project.json con los datos necesarios para los secrets de github, teniendo ahi el org_id y project_id, despues con el token anterior generado creamos vercel_token.
-> 
->![ScreenShot](img/21.png)
->![ScreenShot](img/22.png)
-
-## 19. Creacion del Job Deploy
-> Con todo lo anterior hecho, pasamos a crear el job que se hara despues de que acabe cypress-test, cogera el codigo y mediante la action y pasandole los secrets y el directorio del proyecto se hara el deploy
-> 
->![ScreenShot](img/23.png)
-```yaml
-deploy:
-    runs-on: ubuntu-latest
-    needs: cypress-test
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Deploy App on Vercel
-        uses: amondnet/vercel-action@v20
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          github-token: ${{ secrets.TOKEN_GITHUB }}
-          vercel-org-id: ${{ secrets.ORG_ID}}
-          vercel-project-id: ${{ secrets.PROJECT_ID}}
-          working-directory: ./
-```
-## 20. Comprobacion del Job Deploy
-> Ahora comprobamos si la ejecucion del job a salido como tenia que salir y se ha desplegado en vercel. En la primera captura comprobamos que todo esta bien y dentro del step podemos comprobar que tiene el link donde se ha desplegado LINK: https://nextjs-iowgett96-jdiezgarcia.vercel.app/
-> 
->![ScreenShot](img/24.png)
 >![ScreenShot](img/25.png)
-
-## 21. Creacion del Job Email-Result
-> Creamos el job para enviar un email con los resultados de los jobs, que necesitara que acaben todos los anteriores(o los dos ultimos ya que son al mismo tiempo y necesitan a cypress), aunque fallen o no, cogemos el codigo y mediante una action creado por nosotros le pasamos los inputs de todos los results y los secrets con el correo destinatario y el correo y contraseña origines
+>
+> Despues vamos al log y comprobamos que nos da un link al proyecto desplegado en Vercel.
 > 
->![ScreenShot](img/26.png)
-```yaml
-  email-result:
-    runs-on: ubuntu-latest
-    if: always()
-    needs: [cypress-test, deploy, linter-test, badge-readme ]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Email Notification
-        uses: ./.github/actions/email_results/
-        id: email-results
-        with:
-          linter: ${{ needs.linter-test.result }}
-          cypress:  ${{ needs.cypress-test.result }}
-          badge:  ${{ needs.badge-readme.result }}
-          deploy:  ${{ needs.deploy.result }}
-          send_to: ${{ secrets.DESTINATION_EMAIL }}
-          origin_email: ${{ secrets.ORIGIN_EMAIL }}
-          origin_pass: ${{ secrets.ORIGIN_PASS }}
-```
-## 22. Creacion del Action Email-Result.yaml
-> Ahora antes de crear otro action nosotros mismo creamos el yaml que contendra todos los inputs nombrados anteriormente y seran requeridos
-> 
->![ScreenShot](img/27.png)
-```yaml
-name: 'email_results'
-description: 'Sends a email with the results'
-inputs:
-  cypress:
-    description: 'Cypress Result'
-    required: true
-  linter:
-    description: 'Linter Result'
-    required: true
-  deploy:
-    description: 'Deploy Result'
-    required: true
-  badge:
-    description: 'Badge Result'
-    required: true
-  send_to:
-    description: 'Email to Receive Results'
-    required: true
-  origin_email:
-    description: 'Email to Send Results'
-    required: true
-  origin_pass:
-    description: 'Email password'
-    required: true
-runs:
-  using: 'node12'
-  main: 'dist/index.js'
-```
-## 23. Creacion del index.js de Email-Result
-> Ahora creamos el proyecto node que mediante el require de core y nodemailter cogeran los inputs y creara el transporter que se encargara de enviar nuestro mensaje mediante gmail, con el user y pass, despues crearemos la estructura del mail mediante un json y enviaremos el mensaje mediante sendMail(), una vez hecho haremos el mismo proceso que antes, buildeando el proyecto.
+>![ScreenShot](img/26-1-A.png)
+>
+> Entramos y funciona correctamente.
 > 
 >![ScreenShot](img/28.png)
+>
+> En los results podemos ver como todo funciona correctamente.
+> 
+> ![ScreenShot](img/26-1-B.png) 
+
+## 15. Cambiar Stage Badge y Deploy a un conjunto Parallelo
+> Ahora antes de pasar al siguiente Stage vamos a modificar Badge y Deploy para que los dos sean parallelos ya que no tienen ninguna dependencia entre ellos y es una manera de mantener la esencia de refactorizar git-actions a jenkins pipeline.
+> 
+>![ScreenShot](img/29.png)
+> 
+> Como podemos comprobar ahora ya tenemos el stage conjunto de ellos dos.
+>  
+>![ScreenShot](img/30.png)
+>
+> En la siguiente captura lo podemos ver mas de cerca, como se ejecutan en parallelo haciendo, varios de steps de las dos al mismo tiempo.
+>
+>![ScreenShot](img/31.png)
+
+```groovy
+stage('Badge and Deploy') {
+    parallel {
+        stage('Create Badge') {
+            steps {
+                script {
+                    env.badgeResult = sh(script: "node jenkinsScripts/create_badge/dist/index.js ${env.cypressResult}", returnStatus: true)
+                    sh 'git config user.email \'jdiez.actions@github.com\''
+                    sh 'git config user.name \'JDiezActions\' '
+                    withCredentials([string(credentialsId: 'TOKEN_GITHUB', variable: 'TOKEN')]) {
+                        sh 'git remote set-url origin https://JDiezGarcia:${TOKEN}@github.com/JDiezGarcia/deploy_actions_project.git'
+                    }
+                    sh 'git add .'
+                    sh 'git commit --allow-empty -m \'[ci skip] Readme\''
+                    sh 'git push origin HEAD:jenkins'
+                }
+            }
+        }
+        stage('Deploy') {
+            when {
+                expression {
+                    env.lintResult == "0" && env.cypressResult == "0"
+                }
+            }
+            steps {
+                sh 'npm install -g vercel'
+                script {
+                    withCredentials([
+                    string(credentialsId: 'VERCEL_ORG', variable: 'ORG_ID'),
+                    string(credentialsId: 'VERCEL_TOKEN', variable: 'VERCEL'),
+                    string(credentialsId: 'VERCEL_PROJECT', variable: 'PROJECT_ID')
+                    ]) {
+                        env.deployResult = sh(
+                            script: 'VERCEL_ORG_ID=${ORG_ID} VERCEL_PROJECT_ID=${PROJECT_ID} vercel --prod --scope jdiezgarcia --token=${VERCEL} .',
+                            returnStatus: true
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+## 16. Comprobacion Skip Stage Deploy
+> Antes de pasar al siguiente stage, vamos a comprobar que lo demas continuaria, pero el deploy no se haria si falla uno de los test, por ello, vamos a cambiar que una de las comprobaciones compruebe un 1 en vez de cero para que falle. (Captura hecha mas adelante)
+> 
+>![ScreenShot](img/skip_vercel.png)
+>
+> Como podemos comprobar esto nos daria un fallo en deploy pero lo demas continuaria como deberia sin causar que los siguientes Stages hagan su trabajo de notificacion (Screenshot del Email).
+> 
+>![ScreenShot](img/26-2.png)
+
+## 17. Creacion Stage Send Email
+> Lo primero que hacemos es crear las siguientes credenciales, que seran la contraseña de aplicaciones de Gmail y la otra el correo que envia las notificaciones.
+> 
+>![ScreenShot](img/32.png)
+>
+> Ahora en el correo de origen de GMAIL tenemos que pemitir la autenticacion en 2 pasos para poder luego crear una contraseña para X aplicacion que sera la que hemos puesto en ORIGIN_PASS y en ORIGIN_EMAIL
+> 
+>![ScreenShot](img/33.png)
+> 
+> Primero cogemos el stage de result y lo cambiamos a Send Email para luego utilizar las credenciales anteriores, pero ademas creamos variables de entorno para los parametros del principio, para asi utilizarlos dentro del script, teniendo el Email que recibira la notificacion, el nombre que ha ejecutado el build y el subject, en caso de automatico pondra los default de antes y por ultimo guardamos el resultado utilizarlo en el ultimo stage.
+> 
+> ![ScreenShot](img/34.png)
+```groovy
+stage('Send Email') {
+    steps {
+        script {
+            withCredentials([
+                string(credentialsId: 'ORIGIN_EMAIL', variable: 'EMAIL_O'),
+                string(credentialsId: 'ORIGIN_PASS', variable: 'PASS_O'),
+            ]) {
+                env.emailDest = params.email
+                env.exectUser = params.executor
+                env.subjEmail = params.subject
+                env.emailResult = sh(
+                    script: 'ORIGIN_E=${EMAIL_O} ORIGIN_P=${PASS_O} node jenkinsScripts/email_results/dist/index.js',
+                    returnStatus: true
+                )
+            }
+        }
+    }
+}
+```
+
+## 18. Creacion Script Email-Result
+> Ahora creamos el script en node que mediante el require nodemailter cogeran las variables de entorno creadas de los parametros y las creadas de los resultados, las cuales dependiendo de su resultado utilizaran una funcion que las formateara a Success o Failure y creara el transporter que se encargara de enviar nuestro mensaje mediante gmail, con el user y pass, despues crearemos la estructura del mail mediante un json y enviaremos el mensaje mediante sendMail(), una vez hecho haremos el mismo proceso que antes, buildeando el proyecto.
+> 
+>![ScreenShot](img/e-1.png)
 ```js
-const core = require('@actions/core');
 const nodemailer = require('nodemailer');
+const linter = formatResult(process.env.lintResult);
+const cypress = formatResult(process.env.cypressResult);
+const badge = formatResult(process.env.badgeResult);
+const deploy = formatResult(process.env.deployResult);
+const originEmail = process.env.ORIGIN_E;
+const originPass = process.env.ORIGIN_P;
+const destinationEmail = process.env.emailDest;
 
 var transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
-        user: `${core.getInput('origin_email')}`,
-        pass: `${core.getInput('origin_pass')}`
+        user: `${originEmail}`,
+        pass: `${originPass}`
     }
 });
 
 var mailOptions = {
-    from: `${core.getInput('origin_email')}`, 
-    to: `${core.getInput('send_to')}`,
-    subject: 'Resultado del workdflow ejecutado',
+    from: `${originEmail}`, 
+    to: `${destinationEmail}`,
+    subject: `${process.env.subjEmail}`,
     html: `
     <div>
-        <p>Se ha realizado un push en la rama main que ha provocado la ejecución del workflow 
-        project_flow con los siguientes resultados: </p>
+        <p>Se ha realizado un build en Jenkins
+        por el user (${process.env.exectUser}) con los siguientes resultados: </p>
         <br/>
         <br/>
-        <span>- linter: ${core.getInput('linter')}</span><br/>
-        <span>- cypress: ${core.getInput('cypress')}</span><br/>
-        <span>- badge: ${core.getInput('badge')}</span><br/>
-        <span>- deploy: ${core.getInput('deploy')}</span><br/>
+        <span>- linter: ${linter}</span><br/>
+        <span>- cypress: ${cypress}</span><br/>
+        <span>- badge: ${badge}</span><br/>
+        <span>- deploy: ${deploy}</span><br/>
     </div>
     ` 
 };
 
+function formatResult(result){
+    if(result == 0){
+        return "Success";
+    }else{
+        return "Failure";
+    }
+};
 
 transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
         console.log(error);
+        process.exit(1);
     } else {
         console.log('Message sent: ' + info.response);
+        process.exit(0)
     }
 });
 ```
 
-## 22. Creacion de secretos para Email-Result
-> Ahora creamos los secretos necesarios para el action, siendo estos el user y pass de origen y el correo del destinatario. DESTINATION_EMAIL, ORIGIN_EMAIL y ORIGIN_PASS (Vea el siguiente paso antes)
+## 19. Comprobacion Stage Send Email
+> Comprobamos como han ido los Stages y vemos que todos se han ejecutado.
 > 
->![ScreenShot](img/29.png)
+>![ScreenShot](img/e-2.png)
+>
+> Como podemos ver el email se ha enviado con el Subject, teniendo un texto donde se identifica el user y por ultimo los estados de los Stages
+> 
+>![ScreenShot](img/e-3.png)
 
-## 23. Permiso de envio en Aplicacion poco Seguras
-> Ahora en el correo de envio de GMAIL tenemos que pemitir la autenticacion en 2 pasos para poder luego crear una contraseña para X aplicacion que sera la que hemos puesto en ORIGIN_PASS
-> 
->![ScreenShot](img/30.png)
 
-## 24. Comprobacion del Job Email-Result
-> Una vez hecho todo lo anterior comprobamos la ejecucion del job y como vemos como ha funcionado su ejecucion, ahora comprobamos el correo y vemos como tenemos todos los resultados en el email que nos ha llegado por el action.
+## 20. Creacion Stage Tweet Results (Custom Stage)
+> Primero necesitaremos todas estas credenciales para utilizar twitter. [TWITTER TUTORIAL](#twitter-development).
 > 
->![ScreenShot](img/31.png)
->![ScreenShot](img/32.png)
-
-## 25. Creacion del Job Tweet-Results (Custom Job)
-> Para nuestro ultimo Job vamos a crear un job que una vez acabado todos los anteriores(Con el ultimo ya bastaria), cogera el codigo y ejecutara nuestra action, que se le pasaran todos los results incluido el del email y 4 secrets las claves y secrets de access y consumer.
+>![ScreenShot](img/t-1.png)
 > 
->![ScreenShot](img/33.png)
-```yaml
-  tweet-result:
-    runs-on: ubuntu-latest
-    if: always()
-    needs: [cypress-test, deploy, linter-test, badge-readme, email-result ]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      
-      - name: Post Tweet
-        uses: ./.github/actions/tweet_results/
-        id: tweet-results
-        with:
-          linter: ${{ needs.linter-test.result }}
-          cypress:  ${{ needs.cypress-test.result }}
-          badge:  ${{ needs.badge-readme.result }}
-          deploy:  ${{ needs.deploy.result }}
-          email: ${{ needs.email-result.result }}
-          access_key: ${{ secrets.ACCESS_KEY }}
-          access_secret: ${{ secrets.ACCESS_SECRET }}
-          consumer_key: ${{ secrets.CONSUMER_KEY }}
-          consumer_secret: ${{ secrets.CONSUMER_SECRET }}
+> Utilizaremos la credenciales dadas anteriormente y se las pasaremos como variables de entorno al script que ejecutaremos, siendo asi nuestro ultimo stage.
+> 
+>![ScreenShot](img/tw-1.png)
+```groovy
+stage('Tweet Results') {
+    steps {
+        script {
+            withCredentials([
+                string(credentialsId: 'ACCESS_KEY', variable: 'A_K'),
+                string(credentialsId: 'ACCESS_SECRET', variable: 'A_S'),
+                string(credentialsId: 'CONSUMER_KEY', variable: 'C_K'),
+                string(credentialsId: 'CONSUMER_SECRET', variable: 'C_S')
+            ]) {
+            sh 'A_KEY=${A_K} A_SECRET=${A_S} C_SECRET=${C_S} C_KEY=${C_K} node jenkinsScripts/tweet_results/dist/index.js'
+            }
+        }
+    }
+}
 ```
 
-## 26. Creacion del Action Tweet-Result.yaml
-> Una vez tenemos el job creamos el yaml añadiendo todos los inputs anteriores siendo todos tambien requeridos
+## 21. Creacion Script Tweet Results
+> Ahora mediante require de TwitterClient, cogeremos los variables de las credentialas y las meteremos en config, crearemos un nuevo twitterClient con la config. Despues tendremos dos funciones una para crear una fecha y que no detecte en caso de que todo salga igual en los results cambien el tweet para que no de error por duplicado y la que posteara el tweet. Esta ultima tendra el contenido del tweet(data) y mediante la funcion del cliente tweets.statuesUpdate(que envia una peticion POST a la api de Twitter) postearemos nuestro tweet. Reutilizamos las variables de resultados, ademas utilizamos la de email y formateamos con la misma funcion del email.
 > 
->![ScreenShot](img/34.png)
-```yaml
-name: 'tweet_results'
-description: 'Will tweet all the results'
-inputs:
-  cypress:
-    description: 'Cypress Result'
-    required: true
-  linter:
-    description: 'Linter Result'
-    required: true
-  deploy:
-    description: 'Deploy Result'
-    required: true
-  badge:
-    description: 'Badge Result'
-    required: true
-  email:
-    description: 'Email Result'
-    required: true
-  consumer_key:
-    description: 'Consumer Key'
-    required: true
-  consumer_secret:
-    description: 'Consumer Secret'
-    required: true
-  access_key:
-    description: 'Access Key'
-    required: true
-  access_secret:
-    description: 'Access Secret'
-    required: true
-runs:
-  using: 'node12'
-  main: 'dist/index.js'
-```
-## 27. Creacion del index.js del Action Tweet-Result
-> Ahora mediante los require de core y TwitterClient, cogeremos los secrets y los meteremos en config, crearemos un nuevo twitterClient con la config. Despues tendremos dos funciones una para crear una fecha y que no detecte en caso de que todo salga igual en los results cambien el tweet para que no de error por duplicado y la que posteara el tweet. Esta ultima tendra el contenido del tweet(data) y mediante la funcion del cliente tweets.statuesUpdate(que envia una peticion POST a la api de Twitter) postearemos nuestro tweet.
-> 
->![ScreenShot](img/35.png)
+>![ScreenShot](img/tw-2.png)
 ```js
-const core = require('@actions/core');
 const { TwitterClient } = require('twitter-api-client');
+const linter = formatResult(process.env.lintResult);
+const cypress = formatResult(process.env.cypressResult);
+const badge = formatResult(process.env.badgeResult);
+const deploy = formatResult(process.env.deployResult);
+const email = formatResult(process.env.emailResult);
+
 const config = {
-    apiKey: `${core.getInput('consumer_key')}`,
-    apiSecret: `${core.getInput('consumer_secret')}`,
-    accessToken: `${core.getInput('access_key')}`,
-    accessTokenSecret: `${core.getInput('access_secret')}`
+    apiKey: `${process.env.C_K}`,
+    apiSecret: `${process.env.C_S}`,
+    accessToken: `${process.env.A_K}`,
+    accessTokenSecret: `${process.env.A_S}`
 };
+
 const twitterClient = new TwitterClient(config);
 
 function actualDate(){
@@ -706,42 +719,47 @@ function actualDate(){
     let seconds = date_ob.getSeconds();
     
     return year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds
-};
+}
+
 function PostTweet(){
     
     let data = 
-        `RESULTS JOBS:
+        `RESULTS JOBS JENKINS:
         [Results-Date: ${actualDate()}\n]
-        linter: ${core.getInput('linter')}\n
-        cypress: ${core.getInput('cypress')}\n
-        badge: ${core.getInput('badge')}\n
-        deploy: ${core.getInput('deploy')}\n
-        email: ${core.getInput('email')}`;
+        linter: ${linter}\n
+        cypress: ${cypress}\n
+        badge: ${badge}\n
+        deploy: ${deploy}\n
+        email: ${email}`;
     
     twitterClient.tweets.statusesUpdate({
         status: data
-    }).then(
-        console.log("Tweeted!")
+    }).then( () => {
+        console.log("Tweeted!"),
+        process.exit(0)
+    }
     ).catch(err => {
         console.error(err)
+        process.exit(1);
     })
-};
+}
+
+function formatResult(result) {
+    if (result == 0) {
+        return "Success";
+    } else {
+        return "Failure";
+    }
+}
 
 PostTweet();
 ```
-## 28. Creacion cuenta Developer en Twitter
-> Ahora creamos una cuenta de Developer en Twitter y creamos un enviroment y un proyecto, una vez dentro de nuestro proyecto cambiamos los permisos de este a todos los necesario siendo esta las tres opciones: Read, Read and Write y Read, Write and Direct Messages, una vez eso vamos a Keys y Tokens y creamos consumer keys y authentication Tokens, que seran los secrets previamente utilizados
-> 
->![ScreenShot](img/36.png)
 
-## 29. Creacion de los secretes para la Action Tweet-Results
-> Ahora añadimos estas keys y secrets a nuestros secrets de github siendo estos: CONSUMER_KEY, CONSUMER_SECRET, ACCESS_KEY y ACCESS_SECRET
+## 22. Comprobacion Stage Tweet Results
+> Y finalmente comprobamos la ejecucion del stage y vemos que todo esta bien.
 > 
->![ScreenShot](img/37.png)
-
-## 30. Comprobacion del Job Tweet-Results
-> Y finalmente comprobamos la ejecucion y job sale bien, entonces vamos a la cuenta de twitter y que si se ha publicado el tweet con los resultados.
-> 
->![ScreenShot](img/38.png)
->![ScreenShot](img/39.png)
-
+>![ScreenShot](img/tw-3.png)
+>
+> Y aqui que todo se postea correctamente en Twitter.
+>
+>![ScreenShot](img/tw-4.png)
